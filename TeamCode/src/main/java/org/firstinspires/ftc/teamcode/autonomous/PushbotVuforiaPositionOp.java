@@ -30,11 +30,10 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -53,90 +52,29 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * This OpMode illustrates the basics of using the Vuforia localizer to determine
- * positioning and orientation of robot on the FTC field.
- * The code is structured as a LinearOpMode
- *
- * Vuforia uses the phone's camera to inspect it's surroundings, and attempt to locate target images.
- *
- * When images are located, Vuforia is able to determine the position and orientation of the
- * image relative to the camera.  This sample code than combines that information with a
- * knowledge of where the target images are on the field, to determine the location of the camera.
- *
- * This example assumes a "diamond" field configuration where the red and blue alliance stations
- * are adjacent on the corner of the field furthest from the audience.
- * From the Audience perspective, the Red driver station is on the right.
- * The two vision target are located on the two walls closest to the audience, facing in.
- * The Stones are on the RED side of the field, and the Chips are on the Blue side.
- *
- * A final calculation then uses the location of the camera on the robot to determine the
- * robot's location and orientation on the field.
- *
- * @see VuforiaLocalizer
- * @see VuforiaTrackableDefaultListener
- * see  ftc_app/doc/tutorial/FTC_FieldCoordinateSystemDefinition.pdf
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
- *
- * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
- * is explained below.
- */
-
-@Autonomous(name="Concept: Vuforia Navigation", group ="Concept")
+@Autonomous(name="Vuforia Navigation", group ="Concept")
 @Disabled
-public class ConceptVuforiaNavigation extends LinearOpMode {
+public class PushbotVuforiaPositionOp extends LinearOpMode {
 
     public static final String TAG = "Vuforia Sample";
 
     OpenGLMatrix lastLocation = null;
 
-    /**
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-     * localization engine.
-     */
+    // create a variable to store the local vuforia instance
     VuforiaLocalizer vuforia;
 
     @Override public void runOpMode() throws InterruptedException {
-        /**
-         * Start up Vuforia, telling it the id of the view that we wish to use as the parent for
-         * the camera monitor feedback; if no camera monitor feedback is desired, use the parameterless
-         * constructor instead. We also indicate which camera on the RC that we wish to use. For illustration
-         * purposes here, we choose the back camera; for a competition robot, the front camera might
-         * prove to be more convenient.
+        /*set parameters for a new instance of vuforia
+         *set camera direction
+         * set license key
          *
-         * Note that in addition to indicating which camera is in use, we also need to tell the system
-         * the location of the phone on the robot; see phoneLocationOnRobot below.
-         *
-         * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
-         * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
-         * Vuforia will not load without a valid license being provided. Vuforia 'Development' license
-         * keys, which is what is needed here, can be obtained free of charge from the Vuforia developer
-         * web site at https://developer.vuforia.com/license-manager.
-         *
-         * Valid Vuforia license keys are always 380 characters long, and look as if they contain mostly
-         * random data. As an example, here is a example of a fragment of a valid key:
-         *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
-         * Once you've obtained a license key, copy the string form of the key from the Vuforia web site
-         * and paste it in to your code as the value of the 'vuforiaLicenseKey' field of the
-         * {@link Parameters} instance with which you initialize Vuforia.
-         *
-         * Gimmie da caboose
          */
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
-        parameters.vuforiaLicenseKey = "ATsODcD/////AAAAAVw2lR...d45oGpdljdOh5LuFB9nDNfckoxb8COxKSFX";
+        parameters.vuforiaLicenseKey = "AcMSLB//////AAAAGV2X9BmFFk6Pt9dw+Dg7oCSDbgmpvFL2uaQFUQNenTRFP8eywDy/1JH+6MeeMp/aHH3L2pWVW+t2hx9saq2n72eE+/6orS0hL6ooUobxBlvKS6YQqJIQM7ZOTOIVVpgpzVODNQVdcvRW6Vm2yGrRUAPnuEScnQU9ahY8PSApozJ05M8oS33fEP8T76Y8V31jWRqaw1JIsXQRKHzmQpK5l1no4LwBQ/iCxmHHJ3h77zlfKDsP9DQrh0r/r9b8dP7sSMtCQsukfrmwD4o5uF+S6e4ScWTA4tgpXkPMYVfyjVLsynvNHhi2kuzd2goDeP1uNgpSoEXzJQQKcNeo99nKm3BU22USUBPliFrocMRYGnxb";
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
-        /**
-         * Load the data sets that for the trackable objects we wish to track. These particular data
-         * sets are stored in the 'assets' part of our application (you'll see them in the Android
-         * Studio 'Project' view over there on the left of the screen). You can make your own datasets
-         * with the Vuforia Target Manager: https://developer.vuforia.com/target-manager. PDFs for the
-         * example "StonesAndChips", datasets can be found in in this project in the
-         * documentation directory.
-         */
+        //pulls trackable files and sets their name
         VuforiaTrackables stonesAndChips = this.vuforia.loadTrackablesFromAsset("StonesAndChips");
         VuforiaTrackable redTarget = stonesAndChips.get(0);
         redTarget.setName("RedTarget");  // Stones
@@ -144,18 +82,17 @@ public class ConceptVuforiaNavigation extends LinearOpMode {
         VuforiaTrackable blueTarget  = stonesAndChips.get(1);
         blueTarget.setName("BlueTarget");  // Chips
 
-        /** For convenience, gather together all the trackable objects in one easily-iterable collection */
-        List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
+        //all targets are added to list to make easier to reference later on
+        List<VuforiaTrackable> allTrackables = new ArrayList<>();
         allTrackables.addAll(stonesAndChips);
 
-        /**
-         * We use units of mm here because that's the recommended units of measurement for the
-         * size values specified in the XML for the ImageTarget trackables in data sets. E.g.:
-         *      <ImageTarget name="stones" size="247 173"/>
-         * You don't *have to* use mm here, but the units here and the units used in the XML
-         * target configuration files *must* correspond for the math to work out correctly.
+        /*
+        convert all dimensions to mm
+        vuforia is designed to work in mm
+        adds a constant for mm to inch
+        converts bot and field dims to mm
          */
-        float mmPerInch        = 25.4f;
+        float mmPerInch = (float)25.4;
         float mmBotWidth       = 18 * mmPerInch;            // ... or whatever is right for your robot
         float mmFTCFieldWidth  = (12*12 - 2) * mmPerInch;   // the FTC field is ~11'10" center-to-center of the glass panels
 
