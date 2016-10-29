@@ -29,7 +29,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.ER7373.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 //import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -37,11 +37,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.teamcode.ER7373.mechanics.Mecanum;
 
 
-/**
- * Demonstrates empty OpMode
- */
+
 @TeleOp(name = "Pushbot Teleop", group = "Concept")
 //@Disabled
 
@@ -62,37 +61,6 @@ public class teleop_pushbot_mecanum extends OpMode {
   The right joystick will rotate it about the y-axis
    */
 
-  public void mecanum(){
-    //get x y and z values from the gamepad
-    float x = gamepad1.left_stick_x;
-    float y = -gamepad1.left_stick_y;
-    float z = gamepad1.right_stick_x;
-
-    //calculate each wheel power and clip it
-    float powLF = x + y + z;
-    powLF = Range.clip(powLF, -1, 1);
-    float powLR = x - y + z;
-    powLR = Range.clip(powLR, -1, 1);
-    float powRF = x - y - z;
-    powRF = Range.clip(powRF, -1, 1);
-    float powRR = x + y - z;
-    powRR = Range.clip(powRR, -1, 1);
-
-    //send the power to each wheel
-    leftfront.setPower(powLF);
-    leftrear.setPower(powLR);
-    rightfront.setPower(powRF);
-    rightrear.setPower(powRR);
-
-    //right power values to telemetry
-    telemetry.addData("LF Power:", powLF);
-    telemetry.addData("LR Power:", powLR);
-    telemetry.addData("RF Power:", powRF);
-    telemetry.addData("RR Power:", powRR);
-
-
-  }
-
   @Override
   public void init() {
     telemetry.addData("Status", "Initialized");
@@ -103,12 +71,14 @@ public class teleop_pushbot_mecanum extends OpMode {
     rightrear = hardwareMap.dcMotor.get("rightrear");
     rightfront = hardwareMap.dcMotor.get("rightfront");
 
+
+
+
     //set all motors to their run modes
     leftfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     leftrear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     rightfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     rightrear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
 
   }
 
@@ -130,6 +100,9 @@ public class teleop_pushbot_mecanum extends OpMode {
     telemetry.addData("Status", "Run Time: " + runtime.toString());
 
     //call mecanum method to run pushbot
-    mecanum();
+    Mecanum mecanum = new Mecanum(leftfront,leftrear,rightfront,rightrear);
+    mecanum.run(-gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
+
+
   }
 }
