@@ -29,28 +29,27 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-package org.firstinspires.ftc.teamcode.ER7373.teleop;
+package org.firstinspires.ftc.teamcode.ER7373.autonomous;
 
 //import classes from the MR Library
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 //import classes from our own library
-import org.firstinspires.ftc.teamcode.ER7373.mechanics.Mecanum;
-import org.firstinspires.ftc.teamcode.ER7373.mechanics.Shooter;
-import org.firstinspires.ftc.teamcode.ER7373.mechanics.Motor;
-import org.firstinspires.ftc.teamcode.ER7373.mechanics.ServoM;
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import org.firstinspires.ftc.teamcode.ER7373.mechanics.*;
 
 
-@TeleOp(name = "7373 Teleop", group = "Concept")
+
+
+@Autonomous(name = "7373 BlueAuto", group = "Concept")
 //@Disabled
 
-public class Q1Teleop7373 extends OpMode {
+public class BlueShootAndPush1Q extends OpMode {
 
   private ElapsedTime runtime = new ElapsedTime();
 
@@ -70,10 +69,10 @@ public class Q1Teleop7373 extends OpMode {
   //motor varaibles for the intake
   DcMotor intakem;
 
-  //servo variable for the ball stop and its 2 positions
+  //servo varaible for the ball stop and its 2 positions
   Servo ballStop;
-  double closed = .3;
-  double open = 1;
+  float closed = (float) 0;
+  float open = (float) .9;
 
 
   //Logic Variables
@@ -109,6 +108,8 @@ public class Q1Teleop7373 extends OpMode {
 
     //set servo to closed position
     ballStop.setPosition(closed);
+
+
 
 
   }
@@ -187,7 +188,7 @@ public class Q1Teleop7373 extends OpMode {
       shooter.rpmRun(1100);
       shooterPower = true;
     } else if (gamepad2.x) {
-      shooter.rpmRun(1300);
+      shooter.rpmRun(1000);
       shooterPower = true;
     } else {
       shooterPower = false;

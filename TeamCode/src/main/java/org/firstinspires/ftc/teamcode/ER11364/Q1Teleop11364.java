@@ -31,9 +31,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode.ER11364;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 //import modern robotics library classes
@@ -46,7 +46,7 @@ import org.firstinspires.ftc.teamcode.ER7373.mechanics.*;
  * Teleop program for 11364 for 1st Qualifier
  *
  */
-@Autonomous(name = "Concept: NullOp", group = "Concept")
+@TeleOp(name = "11364 Teleop", group = "Concept")
 @Disabled
 public class Q1Teleop11364 extends OpMode {
 
@@ -65,6 +65,10 @@ public class Q1Teleop11364 extends OpMode {
 
   //create ball stop servos
   Servo stop;
+
+  //create CR servo for intake
+  Servo intakeServo;
+  Servo activeIntakeServo;
 
 
 
@@ -85,6 +89,8 @@ public class Q1Teleop11364 extends OpMode {
 
     //add servos to the hardware map
     stop = hardwareMap.servo.get("servolower");
+    intakeServo = hardwareMap.servo.get("intakeservo");
+    activeIntakeServo = hardwareMap.servo.get("activeintakeservo");
 
 
 
@@ -133,18 +139,38 @@ public class Q1Teleop11364 extends OpMode {
     shooter.runPower(-gamepad2.right_stick_y);
 
     //run the intake with left joystick on gamepad 2
-    intake.powerRun(-gamepad2.left_stick_y);
+    intake.powerRun((float)-.3*gamepad2.left_stick_y);
 
-    //intake macro controls * need switch or encoder to run...
+
 
     //run the servo for the intake using the dpad
     if (gamepad2.dpad_down){
-      stopServo.setPos(1);
-    } else if (gamepad2.dpad_down){
-      stopServo.setPos(0);
+      stopServo.setPos(125/128);
+    } else if (gamepad2.dpad_up){
+      stopServo.setPos(30/128);
     }
 
-    //run CR servo
+    //run CR servo constantly
+    intakeServo.setDirection(Servo.Direction.REVERSE);
+
+    /**
+     *  run the intake CR servo
+     *  gamepad 2
+     *  Right bumper intakes
+     *  Left Bumper outlets
+     */
+    if(gamepad2.right_bumper){
+      activeIntakeServo.setDirection(Servo.Direction.FORWARD);
+    } else if(gamepad2.left_bumper){
+      activeIntakeServo.setDirection(Servo.Direction.REVERSE);
+    } else {
+      activeIntakeServo.setPosition(0);
+    }
+
+
+
+
+
 
 
 

@@ -51,7 +51,9 @@ public class Shooter {
         power = Range.clip(power, -1, 1);
 
         //sending power to motors
+        left.setMaxSpeed(100000);
         left.setPower(-power);
+        right.setMaxSpeed(100000);
         right.setPower(power);
     }
 
