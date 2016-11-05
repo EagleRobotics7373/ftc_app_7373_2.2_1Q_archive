@@ -34,6 +34,7 @@ package org.firstinspires.ftc.teamcode.ER7373.autonomous;
 //import classes from the MR Library
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -47,9 +48,9 @@ import org.firstinspires.ftc.teamcode.ER7373.mechanics.*;
 
 
 @Autonomous(name = "7373 BlueAuto", group = "Concept")
-//@Disabled
+@Disabled
 
-public class BlueShootAndPush1Q extends OpMode {
+public class BlueShootAndPush1Q extends LinearOpMode  {
 
   private ElapsedTime runtime = new ElapsedTime();
 
@@ -66,13 +67,13 @@ public class BlueShootAndPush1Q extends OpMode {
   DcMotor shooterLeft;
   DcMotor shooterRight;
 
-  //motor varaibles for the intake
+  //motor variables for the intake
   DcMotor intakem;
 
-  //servo varaible for the ball stop and its 2 positions
+  //servo variable for the ball stop and its 2 positions
   Servo ballStop;
-  float closed = (float) 0;
-  float open = (float) .9;
+  double closed = .4;
+  double open = .95;
 
 
   //Logic Variables
@@ -81,134 +82,101 @@ public class BlueShootAndPush1Q extends OpMode {
 
 
   @Override
-  public void init() {
-    telemetry.addData("Status", "Initialized");
+  public void runOpMode() throws InterruptedException{
+      telemetry.addData("Status", "Initialized");
 
-    //add all motors to the hardware map
-    leftFront = hardwareMap.dcMotor.get("leftfront");
-    leftRear = hardwareMap.dcMotor.get("leftrear");
-    rightRear = hardwareMap.dcMotor.get("rightrear");
-    rightFront = hardwareMap.dcMotor.get("rightfront");
-    shooterLeft = hardwareMap.dcMotor.get("shooterleft");
-    shooterRight = hardwareMap.dcMotor.get("shooterright");
-    intakem = hardwareMap.dcMotor.get("intake");
-
-
-    //set all motors to their run modes
-    leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    shooterLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    shooterRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    intakem.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-    //add servo to hardware map
-    ballStop = hardwareMap.servo.get("ballstop");
-
-    //set servo to closed position
-    ballStop.setPosition(closed);
+      //add all motors to the hardware map
+      leftFront = hardwareMap.dcMotor.get("leftfront");
+      leftRear = hardwareMap.dcMotor.get("leftrear");
+      rightRear = hardwareMap.dcMotor.get("rightrear");
+      rightFront = hardwareMap.dcMotor.get("rightfront");
+      shooterLeft = hardwareMap.dcMotor.get("shooterleft");
+      shooterRight = hardwareMap.dcMotor.get("shooterright");
+      intakem = hardwareMap.dcMotor.get("intake");
 
 
+      //set all motors to their run modes
+      leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      shooterLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      shooterRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      intakem.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+      //add servo to hardware map
+      ballStop = hardwareMap.servo.get("ballstop");
 
-  }
-
-
-  @Override
-  public void init_loop() {
-
-  }
-
-
-  @Override
-  public void start() {
-    runtime.reset();
-  }
-
-
-  @Override
-  public void loop() {
-    telemetry.addData("Status", "Run Time: " + runtime.toString());
-
-    //instantiate all objects for our mechanical systems
-
-    //create Mecanum object to run mecanum wheels
-    Mecanum mecanum = new Mecanum(leftFront, leftRear, rightFront, rightRear);
-
-    //create new Shooter object to run the shooter
-    Shooter shooter = new Shooter(shooterLeft, shooterRight);
-
-    //create new Motor object for the intake
-    Motor intake = new Motor(intakem);
-
-
-    //call mecanum run method to send power values to the drivetrain from the controllers
-    mecanum.run(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-
-
-    /**
-     * Run the intake
-     *
-     * Right Trigger draws in
-     *
-     * Left trigger releases
-     */
-    if (gamepad2.right_bumper) {
-      intake.runPower((float) .5);
-    } else if (gamepad2.left_bumper) {
-      intake.runPower((float) -.5);
-    } else {
-      intake.stop();
-    }
-
-    /**
-     * Move the ball stop manually
-     *
-     * Up D pad is open
-     * Down D pad is closed
-     */
-    if (gamepad2.dpad_up) {
+      //set servo to closed position
       ballStop.setPosition(closed);
-    } else if (gamepad2.dpad_down) {
-      ballStop.setPosition(open);
-    } else {
-    }
+
+
+      //wait for start of program
+      runtime.reset();
+      waitForStart();
+      telemetry.addData("Status", "Run Time: " + runtime.toString());
+
+
+      //instantiate all objects for our mechanical systems
+
+      //create Mecanum object to run mecanum wheels
+      Mecanum mecanum = new Mecanum(leftFront, leftRear, rightFront, rightRear);
+
+      //create new Shooter object to run the shooter
+      Shooter shooter = new Shooter(shooterLeft, shooterRight);
+
+      //create new Motor object for the intake
+      Motor intake = new Motor(intakem);
+
+    /**  Starting Position: ______
+     * 1.  The Robot will move forward to get in position for shooting
+     * 2.  The Robot will run shooting procedure for 2 balls
+     * 3.  The robot will go on either path 1 or path 2
+     * Path 1:  Move to and claim the Beacon
+     * Path 2:  Push the cap ball off and park on the center tile
+     */
 
 
     /**
-     * Macro to shoot a ball
-     *
-     * Press a to power on shooter
-     *
-     * Press b to toggle stop
+     * Run through shooting procedures
+     * 1.  Spin up shooter
+     * 2.  Open Stop
+     * 3.  Move Intake
+     * 4.  Close stop to prevent double shot
+     * 5.  Ball shot
+     * 6.  Stop Intake
+     * 7.  Repeat
      */
 
-    if (gamepad2.a) {
-      shooter.rpmRun(1100);
-      shooterPower = true;
-    } else if (gamepad2.x) {
-      shooter.rpmRun(1000);
-      shooterPower = true;
-    } else {
-      shooterPower = false;
+    shooter.rpmRun(1200);
+    Thread.sleep(3000);
+    ballStop.setPosition(open);
+    Thread.sleep(1000);
+    intake.runPower((float) .75);
+    Thread.sleep(250);
+    ballStop.setPosition(closed);
+    Thread.sleep(3000);
+    intake.runPower((float) 0);
+    ballStop.setPosition(open);
+    Thread.sleep(500);
+    intake.runPower((float) .75);
+    Thread.sleep(1000);
+    intake.runPower(0);
+    shooter.stop();
+
+    //move the robot forward ___ seconds
+    mecanum.run((float) .5, 0, 0);
+    Thread.sleep(1500);
+    mecanum.run((float) 0, 0, (float) .5);
+    Thread.sleep(750);
+    mecanum.stop();
+
+
+    //stop the linear op mode
+    stop();
+
+
     }
 
-
-    if (gamepad2.b) stopToggle = !stopToggle;
-
-
-    //send each wheels current RPM values to the telemetry lines
-    int rpml = shooter.rpmLeft();
-    int rpmr = shooter.rpmRight();
-
-    telemetry.addData("Status", "RPM Left:" + rpml);
-    telemetry.addData("Status", "RPM Right:" + rpmr);
-
-    // manual backup for running the shooter
-    if (!shooterPower) {
-      shooter.powerRun((float) (-.7 * gamepad2.left_stick_y));
-    } else {
-    }
   }
-}
+

@@ -31,13 +31,13 @@ public class Mecanum {
     {
         //calculate each wheel power and clip it
         float powLF = x + y + z;
-        powLF = (float).5* Range.clip(powLF, -1, 1);
+        powLF = (float)Range.clip(powLF, -1, 1);
         float powLR = x - y + z;
-        powLR = (float).5*Range.clip(powLR, -1, 1);
+        powLR = (float)Range.clip(powLR, -1, 1);
         float powRF = x - y - z;
-        powRF = (float)-.5*Range.clip(powRF, -1, 1);
+        powRF = (float)-Range.clip(powRF, -1, 1);
         float powRR = x + y - z;
-        powRR =(float) -.5*Range.clip(powRR, -1, 1);
+        powRR =(float)-Range.clip(powRR, -1, 1);
 
         //send the power to each wheel
         leftfront.setPower(powLF);
@@ -64,6 +64,7 @@ public class Mecanum {
         ticks = (int)(ticks +.5);
 
         rightrear.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        rightrear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while(rightrear.getCurrentPosition() != ticks){
             if(ticks > 0) {
                 run(power, 0, 0);

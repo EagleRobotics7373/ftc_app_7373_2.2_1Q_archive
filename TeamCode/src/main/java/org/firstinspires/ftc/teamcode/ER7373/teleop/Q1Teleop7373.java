@@ -38,6 +38,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+//import java classes
+import java.lang.Math.*;
+
 //import classes from our own library
 import org.firstinspires.ftc.teamcode.ER7373.mechanics.Mecanum;
 import org.firstinspires.ftc.teamcode.ER7373.mechanics.Shooter;
@@ -48,7 +51,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 
 @TeleOp(name = "7373 Teleop", group = "Concept")
-//@Disabled
+@Disabled
 
 public class Q1Teleop7373 extends OpMode {
 
@@ -72,11 +75,11 @@ public class Q1Teleop7373 extends OpMode {
 
   //servo variable for the ball stop and its 2 positions
   Servo ballStop;
-  double closed = .3;
+  double closed = .4;
   double open = 1;
 
 
-  //Logic Variables
+  //Logic Variables8
   boolean shooterPower = false;
   boolean stopToggle = false;
 
@@ -143,7 +146,7 @@ public class Q1Teleop7373 extends OpMode {
 
 
     //call mecanum run method to send power values to the drivetrain from the controllers
-    mecanum.run(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+    mecanum.run((float)-Math.pow(gamepad1.left_stick_y,3), (float)Math.pow(gamepad1.left_stick_x,3), (float)Math.pow(gamepad1.right_stick_x,3));
 
 
     /**
@@ -154,9 +157,9 @@ public class Q1Teleop7373 extends OpMode {
      * Left trigger releases
      */
     if (gamepad2.right_bumper) {
-      intake.runPower((float) .5);
+      intake.runPower((float) .75);
     } else if (gamepad2.left_bumper) {
-      intake.runPower((float) -.5);
+      intake.runPower((float) -.75);
     } else {
       intake.stop();
     }
